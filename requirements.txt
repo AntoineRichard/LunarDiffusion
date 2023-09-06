@@ -1,0 +1,9 @@
+addict
+diffusers[torch]
+einops
+numpy
+pre-commit
+pytorch_lightning
+torch==2.0.1 -e https://download.pytorch.org/whl/cu117
+torch==0.15.1 -e https://download.pytorch.org/whl/cu117
+yapf
