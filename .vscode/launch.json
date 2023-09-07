@@ -5,11 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Test Models",
+            "name": "Python: Train DEM Diffuser",
             "type": "python",
             "request": "launch",
-            "program": "dem_zoomer/tests/test_models.py",
+            "program": "scripts/train.py",
             "console": "integratedTerminal",
+            "args": [
+                "--config",
+                "configs/boilerplate.py",
+            ],
             "justMyCode": false
         },
         {

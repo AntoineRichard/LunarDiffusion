@@ -7,7 +7,7 @@ import warnings
 
 import torch
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import argparse
 
 from dem_zoomer.trainer.dem_trainer import DEMDiffusionTrainer

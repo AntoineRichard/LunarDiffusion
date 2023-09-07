@@ -25,9 +25,9 @@ class MODEL_REGISTRY(enum.Enum):
         return __fake_registry__[self.value](*args, **kwargs)
 
     def get(model_type, *args, **kwargs):
+        model_classes = [model_type.value for model_type in list(MODEL_REGISTRY)]
         assert (
-            model_type in __fake_registry__.keys()
-            and model_type in MODEL_REGISTRY.__members__.keys()
+            model_type in __fake_registry__.keys() and model_type in model_classes
         ), f"Model type {model_type} not found in registry."
 
-        return MODEL_REGISTRY(model_type)(*args, **kwargs)
+        return __fake_registry__[model_type](*args, **kwargs)
