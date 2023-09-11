@@ -2,9 +2,9 @@ addict
 diffusers[torch]
 einops
 h5py==3.9.0
+lightning==2.0.8
 numpy
 pre-commit
-pytorch_lightning
 torch==2.0.1 -e https://download.pytorch.org/whl/cu117
 torchvision -e https://download.pytorch.org/whl/cu117
 yapf
