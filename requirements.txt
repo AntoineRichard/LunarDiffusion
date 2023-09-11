@@ -8,3 +8,4 @@ pre-commit
 torch==2.0.1 -e https://download.pytorch.org/whl/cu117
 torchvision -e https://download.pytorch.org/whl/cu117
 yapf
+wandb

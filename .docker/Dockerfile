@@ -25,6 +25,7 @@ RUN apt-get update -y \
     dirmngr \
     gnupg2 \
     git \
+    htop \
     iputils-ping \
     nano \
     net-tools \
@@ -45,6 +46,7 @@ RUN apt-get update -y \
     libxi6 \
     libxrandr2 \
     libxt6 \
+    tmux \
     vulkan-tools \
     # Remove apt cache to not clutter image layers
     && rm -rf /var/lib/apt/lists/* \
