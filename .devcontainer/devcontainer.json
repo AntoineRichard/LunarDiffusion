@@ -1,0 +1,42 @@
+{
+    // Use image to start a container instead of auto-build
+    // "image": "image_name",
+    // Use Dockerfile to build an image automatically on context change
+    "build": {
+        "dockerfile": "../.docker/Dockerfile",
+        "context": "..",
+        "args": {},
+        "target": "" //
+    },
+    // Set container environment variables
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "QT_X11_NO_MITSHM": "1"
+    },
+    "runArgs": [
+        "--network=host",
+        "--volume=/tmp/.X11-unix/:/tmp/.X11-unix/",
+        "--device=/dev/dri:/dev/dri",
+        "--gpus",
+        "all",
+        "--privileged"
+    ],
+    "workspaceMount": "source=${localWorkspaceFolder},target=/root/workspaces/lunar_diffusion,type=bind",
+    "workspaceFolder": "/root/workspaces/lunar_diffusion",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "twxs.cmake",
+                "ms-vscode.cmake-tools",
+                "gruntfuggly.todo-tree",
+                "ms-azuretools.vscode-docker",
+                "eamodio.gitlens",
+                "ms-python.python",
+                "njpwerner.autodocstring",
+                "ms-toolsai.jupyter",
+                "ms-python.black-formatter",
+                "ms-python.isort"
+            ]
+        }
+    }
+}

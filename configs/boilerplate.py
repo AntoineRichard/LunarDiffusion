@@ -9,7 +9,7 @@ max_steps = 100000
 batch_size = 4
 
 num_gpus = 1
-num_workers_per_gpu = 7
+num_workers_per_gpu = 16
 
 ## --------------------  Model --------------------
 
@@ -58,16 +58,22 @@ augmentation_config = [dict()]
 
 root_data_dir = "/mnt/irisgpfs/projects/mis-urso/grasp/data/acronym/renders/objects_filtered_grasps_63cat_8k/"
 
+# Train split
 train_data = dict(
-    type="ToDoDataset",
+    type="LunarSLDEMDataset",
     args=dict(
-        data_root_dir=root_data_dir,
+        data_root="data/processed",
+        data_split="train",
+        prefix="MoonORTO2DEM",
+        num_repeat_dataset=2,
     ),
     batch_size=batch_size,
 )
 
+# Val split
 val_data = copy.deepcopy(train_data)
-val_data["args"]["split"] = "test"
+val_data["args"]["data_split"] = "val"
+val_data["args"]["num_repeat_dataset"] = 1
 val_data["batch_size"] = 4
 
 data = dict(

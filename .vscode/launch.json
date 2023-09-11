@@ -23,6 +23,20 @@
             "program": "dem_zoomer/tests/test_model_new.py",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Python: Debug make h5 data",
+            "type": "python",
+            "request": "launch",
+            "program": "data/utils/make_h5_KD.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--data_path",
+                "/home/kuldeep/phd/code/other-projects/lunar_zoom_generation/data",
+                "--output_path",
+                "/home/kuldeep/phd/code/other-projects/lunar_zoom_generation/data/processed"
+            ],
+            "justMyCode": false
         }
     ]
 }

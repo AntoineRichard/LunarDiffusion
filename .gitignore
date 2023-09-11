@@ -3,7 +3,11 @@
 
 *.img
 *.h5
+*.hdf5
+*.pkl
+*.npy
 
 wget-log
 output
 logs
+trash.ipynb
