@@ -6,7 +6,7 @@ import copy
 resume_training_from_last = True
 
 max_steps = 100000
-batch_size = 8
+batch_size = 4
 
 num_gpus = 1
 num_workers_per_gpu = 7
@@ -15,21 +15,23 @@ num_workers_per_gpu = 7
 
 # --- Denoiser ---
 denoiser_model = dict(
-    dim=16,
-    init_dim=None,
-    out_dim=None,
-    dim_mults=(1, 2, 4, 8),
-    channels=1,
-    self_condition=False,
-    resnet_block_groups=8,
-    learned_variance=False,
-    learned_sinusoidal_cond=False,
-    random_fourier_features=False,
-    learned_sinusoidal_dim=16,
-    sinusoidal_pos_emb_theta=10000,
-    attn_dim_head=32,
-    attn_heads=4,
-    full_attn=(False, False, False, True),
+    type="SimpleConditionalUnet2D",
+    args=dict(
+        dim=16,
+        init_dim=None,
+        out_channels=None,
+        block_channels=(16, 64, 256, 64, 16),
+        channels=1,
+        input_conditioning_dims=None,
+        is_self_conditioned=False,
+        resnet_block_groups=8,
+        learned_variance=False,
+        dropout=None,
+        is_time_conditioned=True,
+        learned_sinusoidal_cond=False,
+        random_fourier_features=False,
+        learned_sinusoidal_dim=16,
+    ),
 )
 # --- Diffuser ---
 model = dict(
@@ -76,7 +78,9 @@ data = dict(
 ## --------------------  Trainer  --------------------
 
 # --- Logger ---
-logger = dict(type="WandbLogger", project="debug-project")
+# logger = dict(type="WandbLogger", project="debug-project")
+# logger = dict(type="TensorBoardLogger")
+logger = dict(type="CSVLogger")
 
 # --- Optimizer ---
 optimizer = dict(
@@ -107,4 +111,5 @@ trainer = dict(
     optimizer=optimizer,
     resume_training_from_last=resume_training_from_last,
     check_val_every_n_epoch=1,
+    use_compile=True,
 )

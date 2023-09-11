@@ -1,12 +1,23 @@
 import torch
+
+# Experimental: Einops fix for torch.compile graph
+from einops._torch_specific import allow_ops_in_compiled_graph
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, Logger, TensorBoardLogger, WandbLogger
+
+from dem_zoomer.models import MODEL_REGISTRY
 
 from ..dataset import DATASET_REGISTRY
 from ..models import MODEL_REGISTRY
 from ..utils.config import Config
 from .experiment import Experiment
 from .trainer import LightningTrainer
+
+# medium/high. Helps on some tensor core GPUs
+torch.set_float32_matmul_precision("medium")
+
+# If compile is enabled, makes sure einops ops in graph are compiled properly
+allow_ops_in_compiled_graph()
 
 
 class DEMDiffusionTrainer(LightningTrainer):
@@ -38,6 +49,10 @@ class DEMDiffusionTrainer(LightningTrainer):
 
     def _build_model(self, model_config):
         model = MODEL_REGISTRY.get(model_config.type, **model_config.args)
+
+        if self.trainer_config.use_compile:
+            print("Using `torch.compile`. Model compilation may take some time.")
+            model = torch.compile(model)
         return model
 
     def _get_callbacks(self) -> list:
@@ -55,7 +70,7 @@ class DEMDiffusionTrainer(LightningTrainer):
 
         checkpoint_callback2 = ModelCheckpoint(
             save_top_k=1,
-            monitor="loss",
+            monitor="val_loss",
             mode="min",
             dirpath=self._experiment.ckpt_dir,
             filename="best",
@@ -90,6 +105,13 @@ class DEMDiffusionTrainer(LightningTrainer):
                     save_dir=self._experiment.log_dir,
                     name=self._experiment.name,
                 )
+            elif logger_config.type == "CSVLogger":
+                logger = CSVLogger(
+                    save_dir=self._experiment.log_dir,
+                    name=self._experiment.name,
+                )
+            else:
+                raise NotImplementedError(f"Logger - `{logger.type}` not supported")
         else:
             logger = CSVLogger(
                 save_dir=self._experiment.log_dir,
@@ -98,7 +120,8 @@ class DEMDiffusionTrainer(LightningTrainer):
         return logger
 
     def _compute_metrics(self):
-        raise NotImplementedError
+        # TODO: Add metrics, if any
+        pass
 
     def training_step(self, batch, batch_idx):
         img, img_cond = batch
@@ -112,11 +135,18 @@ class DEMDiffusionTrainer(LightningTrainer):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        # TODO: Add generation pipeline here
+        # TODO: Add cond generation pipeline here
 
         # Val dataloader -> z_cond
+        img, img_cond = batch
 
-        raise NotImplementedError
+        loss_dict = self.model(img, img_cond)
+        self.log_dict(loss_dict)
+
+        loss = loss_dict["denoising_loss"]
+        self.log("loss", loss)
+
+        return loss
 
     def get_dummy_dataset(self):
         from torch.utils.data import Dataset

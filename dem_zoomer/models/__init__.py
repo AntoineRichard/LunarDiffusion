@@ -25,9 +25,16 @@ class MODEL_REGISTRY(enum.Enum):
         return __fake_registry__[self.value](*args, **kwargs)
 
     def get(model_type, *args, **kwargs):
+        # Check
         model_classes = [model_type.value for model_type in list(MODEL_REGISTRY)]
         assert (
             model_type in __fake_registry__.keys() and model_type in model_classes
         ), f"Model type {model_type} not found in registry."
 
+        # Recursively build "model" tags
+        for key, values in kwargs.items():
+            if key == "model":
+                kwargs[key] = MODEL_REGISTRY.get(values["type"], **values["args"])
+
+        # Top level model with all subnetworks
         return __fake_registry__[model_type](*args, **kwargs)

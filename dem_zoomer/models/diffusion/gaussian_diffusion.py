@@ -90,7 +90,7 @@ class GaussianDiffusion2D(nn.Module):
         self.model = model
 
         self.in_dims = in_dims
-        self.channels = in_channels
+        self.in_channels = in_channels
 
         self.noise_scheduler = self.configure_noise_scheduler(noise_scheduler_type)
         self._noise_scheduler_type = noise_scheduler_type
@@ -253,7 +253,7 @@ class GaussianDiffusion2D(nn.Module):
             Tuple[Tensor, Tensor]: (x@t=0, x_list@t=[0,...,T]) where x:[B,C,D]
         """
 
-        x_T = torch.randn((batch_size, self.channels, *self.in_dims)).to(device)
+        x_T = torch.randn((batch_size, self.in_channels, *self.in_dims)).to(device)
 
         x_noisy = x_T
         all_noisy = [x_T] if return_all else []

@@ -54,12 +54,12 @@ class LightningTrainer(LightningModule):
     ):
         super().__init__()
 
-        # Model
-        self.model = self._build_model(model_config)
-
         # Trainer config
         self.lr = None
         self.trainer_config = self._validate_trainer_config(trainer_config)
+
+        # Model
+        self.model = self._build_model(model_config)
 
         # Optimizer and LR scheduler
         assert hasattr(
@@ -76,6 +76,7 @@ class LightningTrainer(LightningModule):
             split="train",
             batch_size=data_config["train"].batch_size,
         )
+
         self._val_dataloader = self._get_dataloaders(
             data_config, split="val", batch_size=2  # data_config["val"].batch_size,
         )
@@ -185,6 +186,7 @@ class LightningTrainer(LightningModule):
             else self.trainer_config.strategy
         )
 
+        # TODO: Resume from checkpoint
         return Trainer(
             max_steps=self.trainer_config.max_steps,
             accelerator=self.trainer_config.accelerator,
@@ -197,7 +199,7 @@ class LightningTrainer(LightningModule):
             callbacks=callbacks,
             gradient_clip_val=self.trainer_config.gradient_clip_val,
             check_val_every_n_epoch=self.trainer_config.check_val_every_n_epoch,
-            resume_from_checkpoint=self.resume_from_checkpoint,
+            # resume_from_checkpoint=self.resume_from_checkpoint,
             default_root_dir=self.trainer_config.default_root_dir,
         )
 
