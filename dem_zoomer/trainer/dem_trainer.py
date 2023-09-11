@@ -44,15 +44,16 @@ class DEMDiffusionTrainer(LightningTrainer):
         self.resume_from_checkpoint = self._experiment.default_resume_checkpoint
 
     def _build_dataset(self, data_config, split):
-        # TODO: Change to a real dataset
-        return self.get_dummy_dataset()
+        data_split_config = data_config[split]
+        return DATASET_REGISTRY.get(data_split_config.type, **data_split_config.args)
 
     def _build_model(self, model_config):
         model = MODEL_REGISTRY.get(model_config.type, **model_config.args)
 
-        if self.trainer_config.use_compile:
-            print("Using `torch.compile`. Model compilation may take some time.")
-            model = torch.compile(model)
+        if "use_compile" in self.trainer_config:
+            if self.trainer_config.use_compile:
+                print("Using `torch.compile`. Model compilation may take some time.")
+                model = torch.compile(model)
         return model
 
     def _get_callbacks(self) -> list:
@@ -124,27 +125,32 @@ class DEMDiffusionTrainer(LightningTrainer):
         pass
 
     def training_step(self, batch, batch_idx):
-        img, img_cond = batch
+        # Data item
+        img = batch["img"]
+        img_cond = batch["cond"] if batch["cond"] else None
 
+        # Forward pass
         loss_dict = self.model(img, img_cond)
-        self.log_dict(loss_dict)
 
+        # Log
+        self.log_dict(loss_dict, sync_dist=True)
         loss = loss_dict["denoising_loss"]
-        self.log("loss", loss)
+        self.log("train_loss", loss, sync_dist=True, prog_bar=True)
 
         return loss
 
     def validation_step(self, batch, batch_idx):
         # TODO: Add cond generation pipeline here
 
-        # Val dataloader -> z_cond
-        img, img_cond = batch
+        # Dataitem
+        img = batch["img"]
+        img_cond = batch["cond"] if batch["cond"] else None
 
+        # Forward pass
         loss_dict = self.model(img, img_cond)
-        self.log_dict(loss_dict)
 
         loss = loss_dict["denoising_loss"]
-        self.log("loss", loss)
+        self.log("val_loss", loss, sync_dist=True, prog_bar=True)
 
         return loss
 
