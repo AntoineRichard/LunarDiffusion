@@ -68,7 +68,7 @@ def set_deterministic(config, args):
         if args.seed is not None:
             config.seed = args.seed
 
-        from pytorch_lightning import seed_everything
+        from lightning.pytorch import seed_everything
 
         seed_everything(config.seed, workers=True)
         print(
