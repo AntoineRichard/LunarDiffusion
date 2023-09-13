@@ -174,6 +174,7 @@ class LightningTrainer(LightningModule):
             model=self,
             train_dataloaders=self.train_dataloader(),
             val_dataloaders=self.val_dataloader(),
+            ckpt_path=self.resume_from_checkpoint,
         )
 
     def pl_trainer(self):
@@ -194,12 +195,12 @@ class LightningTrainer(LightningModule):
             num_nodes=self.trainer_config.num_nodes,
             devices=self.trainer_config.devices,
             benchmark=self.trainer_config.cudnn_benchmark,
+            deterministic=self.trainer_config.deterministic,
             logger=self._get_logger(),
             log_every_n_steps=self.trainer_config.log_every_n_steps,
             callbacks=callbacks,
             gradient_clip_val=self.trainer_config.gradient_clip_val,
             check_val_every_n_epoch=self.trainer_config.check_val_every_n_epoch,
-            # resume_from_checkpoint=self.resume_from_checkpoint,
             default_root_dir=self.trainer_config.default_root_dir,
         )
 

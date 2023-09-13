@@ -5,11 +5,13 @@ import copy
 # Resume from last saved checkpoint
 resume_training_from_last = True
 
-max_steps = 100000
+seed = 1729
+
+max_steps = 150000
 batch_size = 4
 
 num_gpus = 1
-num_workers_per_gpu = 16
+num_workers_per_gpu = 8
 
 ## --------------------  Model --------------------
 
@@ -20,7 +22,7 @@ denoiser_model = dict(
         dim=16,
         init_dim=None,
         out_channels=None,
-        block_channels=(16, 64, 256, 64, 16),
+        block_channels=(16, 64, 256, 256, 64, 16),
         channels=1,
         input_conditioning_dims=None,
         is_self_conditioned=False,
@@ -84,9 +86,9 @@ data = dict(
 ## --------------------  Trainer  --------------------
 
 # --- Logger ---
-# logger = dict(type="WandbLogger", project="debug-project")
+logger = dict(type="WandbLogger", project="lunar_diffusion")
 # logger = dict(type="TensorBoardLogger")
-logger = dict(type="CSVLogger")
+# logger = dict(type="CSVLogger")
 
 # --- Optimizer ---
 optimizer = dict(
@@ -117,5 +119,6 @@ trainer = dict(
     optimizer=optimizer,
     resume_training_from_last=resume_training_from_last,
     check_val_every_n_epoch=1,
-    use_compile=True,
+    # use_compile=True,
+    deterministic=True,
 )
