@@ -11,3 +11,4 @@ wget-log
 output
 logs
 trash.ipynb
+data/processed
