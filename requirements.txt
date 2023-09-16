@@ -1,11 +1,14 @@
 addict
 diffusers[torch]
 einops
-h5py==3.9.0
 lightning==2.0.8
-numpy
+numpy==1.25.2
 pre-commit
 torch==2.0.1 -e https://download.pytorch.org/whl/cu117
 torchvision -e https://download.pytorch.org/whl/cu117
-yapf
 wandb
+yapf
+# Prebuilt h5py with binaries compiled against 1.12.1 and later
+# produce a memory leak when converting arrays to pytorch tensors
+# So it should be either compiled against a local libhdf5 or from conda
+# h5py==3.9.0

@@ -13,6 +13,8 @@
             "args": [
                 "--config",
                 "configs/boilerplate.py",
+                "--batch-size",
+                "2"
             ],
             "justMyCode": false
         },

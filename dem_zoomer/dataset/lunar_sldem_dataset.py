@@ -104,4 +104,4 @@ class LunarSLDEMDataset(Dataset):
             np.ndarray: raw DEM array [H, W]
         """
         img_id = self._split_dict[data_id][0]
-        return self._h5[img_id][()]
+        return self._h5[img_id][:].copy()

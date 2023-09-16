@@ -8,7 +8,7 @@ resume_training_from_last = True
 seed = 1729
 
 max_steps = 150000
-batch_size = 4
+batch_size = 2
 
 num_gpus = 1
 num_workers_per_gpu = 8

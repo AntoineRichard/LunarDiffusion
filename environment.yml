@@ -1,0 +1,10 @@
+name: lunar_diffusion
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - h5py
+  - pip:
+      - -r requirements.txt
