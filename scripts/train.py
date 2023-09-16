@@ -96,6 +96,7 @@ def main(args):
     # Batch size
     if args.batch_size:
         config.trainer.batch_size = args.batch_size
+        config.data.train.batch_size = args.batch_size
 
     # Data Root
     if args.root_dir:
