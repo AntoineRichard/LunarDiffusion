@@ -76,19 +76,9 @@ class DEMDiffusionTrainer(LightningTrainer):
             every_n_train_steps=self._checkpointing_freq,
         )
 
-        checkpoint_callback2 = ModelCheckpoint(
-            save_top_k=1,
-            monitor="val_loss",
-            mode="min",
-            dirpath=self._experiment.ckpt_dir,
-            filename="best",
-            save_last=True,
-            every_n_train_steps=1000,
-        )
-
         lr_monitor_callback = LearningRateMonitor(logging_interval="step")
 
-        callbacks = [checkpoint_callback1, checkpoint_callback2, lr_monitor_callback]
+        callbacks = [checkpoint_callback1, lr_monitor_callback]
 
         return callbacks
 
@@ -142,7 +132,7 @@ class DEMDiffusionTrainer(LightningTrainer):
         # Log
         self.log_dict(loss_dict, sync_dist=True)
         loss = loss_dict["denoising_loss"]
-        self.log("train_loss", loss, sync_dist=True, prog_bar=True)
+        self.log("loss", loss, sync_dist=True, prog_bar=True)
 
         return loss
 
