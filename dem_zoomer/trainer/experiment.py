@@ -13,13 +13,17 @@ class Experiment:
 
         # Experiment naming
         self.name = config_path.split("/")[-1].split(".")[0]
-        self.category = os.path.join(
-            *(config_path.split("/")[-3:-1])
-        )  # max path hierarchy = 2 # category/subcat/name.py
+
+        # Hacky: Set output directory based on organization of config dir
+        # max path hierarchy = 2 # category/subcat/name.py
+        _dir_split = (
+            os.path.abspath(config_path).split("configs/")[-1].split("/")[-3:-1]
+        )
+        _category_dirs = os.path.join(*_dir_split) if len(_dir_split) > 0 else ""
 
         # Experiment directories
         self.out_dir = out_dir
-        self.exp_dir = os.path.join(os.path.abspath(out_dir), self.category, self.name)
+        self.exp_dir = os.path.join(os.path.abspath(out_dir), _category_dirs, self.name)
         self.ckpt_dir = os.path.join(self.exp_dir, "checkpoints")
         self.log_dir = os.path.join(self.exp_dir, "logs")
         self._make_dirs()

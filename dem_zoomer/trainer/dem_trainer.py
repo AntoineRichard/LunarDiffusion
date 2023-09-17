@@ -140,7 +140,7 @@ class DEMDiffusionTrainer(LightningTrainer):
         if batch_idx % 100 == 0:
             print("Validation loop - Generate demo samples")
             self.model.set_inference_timesteps(100)
-            samples, _ = self.model.generate_samples(num_samples=2)
+            samples, _ = self.model.generate_samples(num_samples=2, device=self.device)
 
             # Unnormalize TODO: Make available in config
             samples = samples * 0.5 + 0.5
