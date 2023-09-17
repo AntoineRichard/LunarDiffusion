@@ -67,7 +67,7 @@ def get_denoiser_model(model_type, device="cuda:0", is_compiled=False):
             out_dim=None,
             dim_mults=(1, 2, 4, 8),
             downsample_factor=2,
-            channels=3,
+            channels=1,
             vit_depth=6,
             vit_dropout=0.2,
             attn_dim_head=32,
@@ -204,6 +204,14 @@ if __name__ == "__main__":
 
     ## GPU runs
     device = "cuda:0"
+
+    print("\n Testing UViT denoiser model \n")
+    test_denoiser(
+        model_type=MODEL_REGISTRY.VIT,
+        device="cuda:0",
+        is_timed=True,
+        is_compiled=False,
+    )
 
     print("\n Testing diffusion model reverse sampling \n")
     test_diffuser(

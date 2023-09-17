@@ -54,7 +54,7 @@ class Attention1D(nn.Module):
         self.heads = heads
         hidden_dim = dim_head * heads
 
-        self.norm = RMSNorm(dim, normalize_dim=1)
+        self.norm = RMSNorm(dim, normalize_dim=2)
 
         self.attn_dropout = nn.Dropout(dropout)
 
@@ -146,7 +146,7 @@ class Transformer(nn.Module):
             self.layers.append(
                 nn.ModuleList(
                     [
-                        Attention(
+                        Attention1D(
                             dim=dim, dim_head=dim_head, heads=heads, dropout=dropout
                         ),
                         FeedForward(

@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "args": [
                 "--config",
-                "configs/boilerplate.py",
+                "configs/boilerplate_vit.py",
                 "--batch-size",
                 "2"
             ],

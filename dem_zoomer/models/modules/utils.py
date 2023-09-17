@@ -1,3 +1,6 @@
+import torch.nn.functional as F
+
+
 def exists(val):
     return val is not None
 

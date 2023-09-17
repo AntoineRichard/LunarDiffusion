@@ -166,12 +166,12 @@ class UViT(nn.Module):
             )
 
         default_out_dim = input_channels
-        self.out_dim = default(out_dim, default_out_dim)
+        self.out_channels = default(out_dim, default_out_dim)
 
         self.final_res_block = resnet_block(dim * 2, dim, time_emb_dim=time_dim)
-        self.final_conv = nn.Conv2d(dim, self.out_dim, 1)
+        self.final_conv = nn.Conv2d(dim, self.out_channels, 1)
 
-    def forward(self, x, time):
+    def forward(self, x, time, **kwargs):
         x = self.init_img_transform(x)
 
         x = self.init_conv(x)

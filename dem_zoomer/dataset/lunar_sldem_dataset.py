@@ -17,7 +17,7 @@ class LunarSLDEMDataset(Dataset):
         self,
         data_root,
         data_split="train",
-        tensor_shape=(1, 256, 256),
+        out_shape=(1, 256, 256),
         prefix="MoonORTO2DEM",
         num_repeat_dataset=2,
         is_debug=False,
@@ -37,7 +37,7 @@ class LunarSLDEMDataset(Dataset):
         self.is_debug = is_debug
 
         # Output tensor shape
-        self.out_channels, self.out_height, self.out_width = tensor_shape
+        self.out_channels, self.out_height, self.out_width = out_shape
 
     def __len__(self):
         """Get length of dataset"""
