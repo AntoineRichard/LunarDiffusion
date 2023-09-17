@@ -1,18 +1,14 @@
 import os.path as osp
-import pickle
-from typing import Any
 
-import einops
 import h5py
 import numpy as np
 import torch
-import torchvision.transforms.functional as tvF
 from torch.utils.data import Dataset
 
 from ..utils.data_utils import load_pickle, min_max_normalize
 
 
-class LunarSLDEMDataset(Dataset):
+class SLDEMDataset(Dataset):
     def __init__(
         self,
         data_root,
@@ -75,27 +71,10 @@ class LunarSLDEMDataset(Dataset):
         # Normalize DEM
         norm_dem = min_max_normalize(raw_dem)
 
-        # Visualize, if debug
-        if self.is_debug:
-            self.visualize(norm_dem)
-
         # Convert to float tensor with batch dim
         norm_dem_tensor = torch.from_numpy(norm_dem).to(dtype=torch.float32)
 
-        # Prepare tensor: resize and adjust batch/channel dim
-
-        out_dem_tensor = einops.rearrange(
-            norm_dem_tensor,
-            f"h w -> {self.out_channels} h w",
-        )
-        out_dem_tensor = tvF.resize(
-            out_dem_tensor, (self.out_height, self.out_width), antialias=False
-        )
-
-        # TODO: Make normalization available in config and use also in generation
-        # This can also be removed in favor of minmax norm above to [-1,1], if always works
-        out_dem_tensor = tvF.normalize(out_dem_tensor, mean=[0.5], std=[0.5])
-        return dict(img=out_dem_tensor, cond=[], metas={})
+        return norm_dem_tensor
 
     def get_data(self, data_id: str) -> np.ndarray:
         """Get data from h5 file

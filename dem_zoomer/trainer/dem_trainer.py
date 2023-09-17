@@ -1,5 +1,6 @@
 import sys
 
+import numpy as np
 import torch
 
 # Experimental: Einops fix for torch.compile graph
@@ -8,6 +9,7 @@ from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 from lightning.pytorch.loggers import CSVLogger, Logger, TensorBoardLogger, WandbLogger
 
 from dem_zoomer.models import MODEL_REGISTRY
+from dem_zoomer.utils.config import Config
 
 from ..dataset import DATASET_REGISTRY
 from ..models import MODEL_REGISTRY
@@ -156,7 +158,7 @@ class DEMDiffusionTrainer(LightningTrainer):
                         ],
                     },
                 )
-
+        # TODO: Metric ? FID?
         return
 
     def get_dummy_dataset(self):
@@ -174,3 +176,51 @@ class DEMDiffusionTrainer(LightningTrainer):
                 return torch.randn(*self.shape), torch.randn(*self.shape)
 
         return DummyDataset()
+
+
+# Conditional trainer
+class ConditionalDEMDiffusionTrainer(DEMDiffusionTrainer):
+    def __init__(self, config: Config):
+        super().__init__(config)
+
+    def validation_step(self, batch, batch_idx):
+        if batch_idx % 100 == 0:
+            print("Validation loop - Generate demo samples")
+
+            # Data item
+            img = batch["img"]
+            img_cond = batch["cond"] if batch["cond"] else None
+            metas = batch["metas"]
+
+            # Conditional generation
+            # TODO: Check batching in z_cond in generation
+            self.model.set_inference_timesteps(100)
+            gen_samples, _ = self.model.generate_samples(
+                num_samples=2, z_cond=img_cond, device=self.device
+            )
+
+            # Unnormalize TODO: Make available in config
+            gen_samples = gen_samples * 0.5 + 0.5
+            gen_samples = gen_samples.permute(0, 2, 3, 1).cpu().numpy()
+
+            cond_imgs = img_cond * 0.5 + 0.5
+            cond_imgs = cond_imgs.permute(0, 2, 3, 1).cpu().numpy()
+
+            # Make a crop vis TODO: batched output vis
+            crop_vis_img = self.dataset.get_crop_visualization(gen_samples, metas)
+
+            # Stack arrays horizontally
+            samples = np.hstack([cond_imgs, crop_vis_img])
+
+            # Log demo images to wandb if it is imported
+            if hasattr(self.logger, "experiment") and "wandb" in sys.modules:
+                self.logger.experiment.log(
+                    {
+                        "Generation samples": [
+                            wandb.Image(sample, caption=f"Sample {i}")
+                            for i, sample in enumerate(samples)
+                        ],
+                    },
+                )
+
+        return

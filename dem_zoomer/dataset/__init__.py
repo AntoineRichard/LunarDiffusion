@@ -1,8 +1,12 @@
 import enum
 
-from .lunar_sldem_dataset import LunarSLDEMDataset
+from .conditional_sldem_dataset import CenterResolveSLDEMDatset
+from .unconditional_sldem_dataset import LunarSLDEMDataset
 
-__fake_registry__ = {"LunarSLDEMDataset": LunarSLDEMDataset}
+__fake_registry__ = {
+    "LunarSLDEMDataset": LunarSLDEMDataset,
+    "CenterResolveSLDEMDatset": CenterResolveSLDEMDatset,
+}
 
 
 class DATASET_REGISTRY(enum.Enum):
