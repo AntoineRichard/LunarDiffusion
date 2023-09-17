@@ -97,7 +97,12 @@ class DEMDiffuser(nn.Module):
 
     @torch.no_grad()
     def generate_samples(
-        self, *, z_cond=None, num_samples=4, return_intermediate=False
+        self,
+        *,
+        z_cond=None,
+        num_samples=4,
+        return_intermediate=False,
+        device="cuda:0" if torch.cuda.is_available() else "cpu"
     ):
         """Generation/Sampling : Generates samples
 
@@ -117,7 +122,7 @@ class DEMDiffuser(nn.Module):
             z_cond=z_cond,
             batch_size=num_samples,
             return_all=return_intermediate,
-            device=z_cond.device,
+            device=z_cond.device if z_cond is not None else device,
         )
 
         if not return_intermediate:

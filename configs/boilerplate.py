@@ -45,7 +45,9 @@ model = dict(
         diffusion_timesteps=1000,
         diffusion_loss="l2",
         beta_schedule="linear",
-        noise_scheduler_type="ddpm",
+        # Using DDIM scheduler allows val loop to run fast in generation mode
+        # While training is still with DDPM 1000 steps
+        noise_scheduler_type="ddim",
         is_conditioned=True,
         denoising_loss_weight=1,
         variance_type="fixed_small",

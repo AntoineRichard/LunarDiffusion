@@ -44,7 +44,6 @@ done
 
 # default values for optional parameters
 NUM_GPUS=${NUM_GPUS:-2}
-MODE=${MODE:-'vae'}
 
 
 if [ -z "$CONFIG_PATH" ] || [ -z "$BATCHSIZE" ]; then

@@ -92,6 +92,9 @@ class LunarSLDEMDataset(Dataset):
             out_dem_tensor, (self.out_height, self.out_width), antialias=False
         )
 
+        # TODO: Make normalization available in config and use also in generation
+        # This can also be removed in favor of minmax norm above to [-1,1], if always works
+        out_dem_tensor = tvF.normalize(out_dem_tensor, mean=[0.5], std=[0.5])
         return dict(img=out_dem_tensor, cond=[], metas={})
 
     def get_data(self, data_id: str) -> np.ndarray:

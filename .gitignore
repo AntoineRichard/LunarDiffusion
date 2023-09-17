@@ -12,3 +12,4 @@ output
 logs
 trash.ipynb
 data/processed
+slurm/outs

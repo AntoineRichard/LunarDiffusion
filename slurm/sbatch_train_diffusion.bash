@@ -61,6 +61,6 @@ export NCCL_DEBUG=INFO
 
 
 conda activate lunar_diffusion
+cd ~/other-projects/LunarDiffusion
 
-
-$SRUN_ARGS python tools/train.py --config $CONFIG --mode $MODE --num-gpus $NUM_GPUS $batchsize_arg
+$SRUN_ARGS python scripts/train.py --config $CONFIG --num-gpus $NUM_GPUS $batchsize_arg

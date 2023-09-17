@@ -1,3 +1,5 @@
+import sys
+
 import torch
 
 # Experimental: Einops fix for torch.compile graph
@@ -18,6 +20,11 @@ torch.set_float32_matmul_precision("medium")
 
 # If compile is enabled, makes sure einops ops in graph are compiled properly
 allow_ops_in_compiled_graph()
+
+try:
+    import wandb
+except:
+    pass
 
 
 class DEMDiffusionTrainer(LightningTrainer):
@@ -140,19 +147,27 @@ class DEMDiffusionTrainer(LightningTrainer):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        # TODO: Add cond generation pipeline here
+        if batch_idx % 100 == 0:
+            print("Validation loop - Generate demo samples")
+            self.model.set_inference_timesteps(100)
+            samples, _ = self.model.generate_samples(num_samples=2)
 
-        # Dataitem
-        img = batch["img"]
-        img_cond = batch["cond"] if batch["cond"] else None
+            # Unnormalize TODO: Make available in config
+            samples = samples * 0.5 + 0.5
+            samples = samples.permute(0, 2, 3, 1).cpu().numpy()
 
-        # Forward pass
-        loss_dict = self.model(img, img_cond)
+            # Log demo images to wandb if it is imported
+            if hasattr(self.logger, "experiment") and "wandb" in sys.modules:
+                self.logger.experiment.log(
+                    {
+                        "Generation samples": [
+                            wandb.Image(sample, caption=f"Sample {i}")
+                            for i, sample in enumerate(samples)
+                        ],
+                    },
+                )
 
-        loss = loss_dict["denoising_loss"]
-        self.log("val_loss", loss, sync_dist=True, prog_bar=True)
-
-        return loss
+        return
 
     def get_dummy_dataset(self):
         from torch.utils.data import Dataset
